@@ -1,0 +1,2 @@
+CRC Sentinel laboratory backup verification sample.
+Lecture notes, question papers and laboratory records can be verified before relying on a USB backup.

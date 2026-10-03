@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CRC Sentinel | USB Backup Verification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">CRC</div>
+        <div><strong>CRC Sentinel</strong><span>USB Backup Utility</span></div>
+      </div>
+      <nav>
+        <button class="nav-btn active" data-tab="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-btn" data-tab="verify"><span>✓</span> Verify Backup</button>
+        <button class="nav-btn" data-tab="history"><span>↺</span> History</button>
+        <button class="nav-btn" data-tab="about"><span>ⓘ</span> About CRC</button>
+      </nav>
+      <div class="side-card">
+        <div class="status-dot"></div>
+        <div><b>Python backend</b><small>Connected · localhost</small></div>
+      </div>
+      <div class="side-footer">CRC-based integrity checking<br>Designed for laboratory demonstration</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">PRODUCT 2 · GROUP II</div>
+          <h1>USB Backup Verification Utility</h1>
+          <p>Verify that a backup copy matches the original using Cyclic Redundancy Check.</p>
+        </div>
+        <div class="top-actions"><span class="pill"><i></i> System Ready</span><span class="date" id="today"></span></div>
+      </header>
+
+      <section id="tab-dashboard" class="tab-panel active">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <div class="hero-copy">
+              <span class="tag">INTEGRITY WORKBENCH</span>
+              <h2>Catch silent backup corruption before it becomes a problem.</h2>
+              <p>Calculate CRCs, generate codewords and verify original-versus-backup data in one workflow.</p>
+              <div class="hero-flow"><span>Input</span><b>→</b><span>Python</span><b>→</b><span>CRC / XOR</span><b>→</b><span>Result</span></div>
+            </div>
+            <div class="hero-orbit"><div class="orbit-ring"></div><div class="orbit-core">CRC<br><small>INTEGRITY</small></div></div>
+          </div>
+          <div class="metric-card"><span>SUPPORTED</span><strong>4</strong><small>CRC algorithms</small><div class="metric-line"><b>CRC-3</b><b>CRC-4</b><b>CRC-8</b><b>CRC-32</b></div></div>
+        </div>
+
+        <div class="section-heading"><div><span class="eyebrow">WORKSPACE</span><h2>CRC Calculator</h2></div><span class="mini-note">Use this panel for binary, text or file CRC calculation.</span></div>
+        <div class="workspace-grid">
+          <div class="panel input-panel">
+            <div class="panel-title"><div><span class="step">01</span><div><h3>Provide data</h3><small>Choose an input type and CRC algorithm.</small></div></div></div>
+            <div class="segmented" id="calc-input-type">
+              <button class="seg active" data-type="binary">Binary</button><button class="seg" data-type="text">Text</button><button class="seg" data-type="file">File</button>
+            </div>
+            <div class="field"><label>CRC algorithm</label><select id="calc-algorithm"><option>CRC-3</option><option>CRC-4</option><option selected>CRC-8</option><option>CRC-32</option></select></div>
+            <div id="calc-data-wrap" class="field"><label id="calc-data-label">Binary data</label><textarea id="calc-data" placeholder="Example: 101101"></textarea><small class="hint">Only 0 and 1 are accepted for binary mode.</small></div>
+            <div id="calc-file-wrap" class="field hidden"><label>Input file</label><div class="dropbox"><input type="file" id="calc-file"><span>Choose a file to calculate its CRC</span></div></div>
+            <button class="primary-btn" id="calculate-btn">Calculate CRC <span>→</span></button>
+          </div>
+
+          <div class="panel result-panel">
+            <div class="panel-title"><div><span class="step">02</span><div><h3>CRC result</h3><small>Python computes the remainder using modulo-2 XOR.</small></div></div><span class="status-badge neutral" id="calc-status">WAITING</span></div>
+            <div class="result-placeholder" id="calc-placeholder"><div class="big-icon">∑</div><h3>Ready for calculation</h3><p>Enter data on the left and run the CRC function.</p></div>
+            <div id="calc-result" class="hidden">
+              <div class="result-row"><span>Generator polynomial</span><code id="out-poly"></code></div>
+              <div class="result-row highlight"><span>CRC remainder</span><code id="out-crc"></code></div>
+              <div class="result-row"><span>Codeword</span><code class="wrap" id="out-codeword"></code></div>
+              <div class="result-stats"><div><small>Data</small><b id="out-bits"></b></div><div><small>CRC bits</small><b id="out-crc-len"></b></div><div><small>Algorithm</small><b id="out-algo"></b></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-verify" class="tab-panel">
+        <div class="section-heading"><div><span class="eyebrow">BACKUP INTEGRITY</span><h2>Verify Original vs Backup</h2></div><span class="mini-note">A matching CRC indicates that no error was detected in the tested data.</span></div>
+        <div class="verify-layout">
+          <div class="panel">
+            <div class="segmented" id="verify-input-type"><button class="seg active" data-type="binary">Binary</button><button class="seg" data-type="text">Text</button><button class="seg" data-type="file">Files</button></div>
+            <div class="field"><label>CRC algorithm</label><select id="verify-algorithm"><option>CRC-3</option><option>CRC-4</option><option selected>CRC-8</option><option>CRC-32</option></select></div>
+            <div id="verify-text-fields">
+              <div class="field"><label>Original data</label><textarea id="original" placeholder="Original value"></textarea></div>
+              <div class="field"><label>Received / backup data</label><textarea id="received" placeholder="Backup value"></textarea></div>
+            </div>
+            <div id="verify-file-fields" class="hidden file-pair"><div class="field"><label>Original file</label><input type="file" id="original-file"></div><div class="field"><label>Backup file</label><input type="file" id="backup-file"></div></div>
+            <label class="toggle"><input type="checkbox" id="simulate-error"><span></span> Simulate a 1-bit error for demonstration</label>
+            <button class="primary-btn" id="verify-btn">Verify Backup <span>✓</span></button>
+          </div>
+          <div class="panel verification-card">
+            <div class="verification-status neutral" id="verify-status"><span class="verify-symbol">?</span><div><small>VERIFICATION STATUS</small><h2>Waiting for data</h2><p>Run a verification to see the CRC comparison.</p></div></div>
+            <div class="compare-grid"><div><small>Original CRC</small><code id="original-crc">—</code></div><div><small>Backup CRC</small><code id="backup-crc">—</code></div><div><small>Remainder</small><code id="verify-remainder">—</code></div><div><small>Byte/Data match</small><b id="byte-match">—</b></div></div>
+            <div class="explain-box"><b>How the check works</b><p>The backup data is processed again with the same generator polynomial. A zero verification remainder means the transmitted CRC is consistent with the received data; a non-zero remainder indicates a detected error.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-history" class="tab-panel">
+        <div class="section-heading"><div><span class="eyebrow">AUDIT TRAIL</span><h2>Verification History</h2></div><a class="secondary-btn" href="/api/export-history">Export TXT</a></div>
+        <div class="panel table-panel"><table><thead><tr><th>Time</th><th>Operation</th><th>Algorithm</th><th>Source</th><th>Result</th></tr></thead><tbody id="history-body"><tr><td colspan="5" class="empty">No operations yet.</td></tr></tbody></table></div>
+      </section>
+
+      <section id="tab-about" class="tab-panel">
+        <div class="section-heading"><div><span class="eyebrow">CONCEPT</span><h2>CRC Operating Principle</h2></div></div>
+        <div class="principle-grid">
+          <div class="panel principle"><span class="round">01</span><h3>Append zeros</h3><p>The data is extended by the degree of the generator polynomial before division.</p></div>
+          <div class="panel principle"><span class="round">02</span><h3>Modulo-2 division</h3><p>Binary division is performed using XOR instead of arithmetic subtraction.</p></div>
+          <div class="panel principle"><span class="round">03</span><h3>CRC remainder</h3><p>The final remainder becomes the CRC value and is appended to form the codeword.</p></div>
+          <div class="panel principle"><span class="round">04</span><h3>Verify at receiver</h3><p>The received codeword is divided again. A zero remainder means no error is detected.</p></div>
+        </div>
+        <div class="panel algorithm-panel"><h3>Generator polynomial configuration</h3><div id="algorithm-list" class="algorithm-list"></div></div>
+      </section>
+
+      <footer>CRC Sentinel · Laboratory Product Demonstration · <span>Input → Dashboard → Python Function → CRC Calculation → Result → Dashboard Output</span></footer>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
